@@ -49,7 +49,7 @@ def case_insensitive(lifetime, lifeTime):
         lifetime.next = not lifeTime
     return foo
 
-@pytest.mark.xfail
+#@pytest.mark.xfail
 def test_collision_underscore():
     assert analyze(underscore_collision, Bus(),Signal(bool(False))) == 0
 @pytest.mark.xfail
