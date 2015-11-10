@@ -171,7 +171,7 @@ class _ToVHDLConvertor(object):
 
         ### infer interface
         top_inst = h.hierarchy[0]
-        intf = _analyzeTopFunc(top_inst, func, *args, **kwargs)
+        intf = _analyzeTopFunc(top_inst, func, 'VHDL', *args, **kwargs)
         intf.name = name
         # sanity checks on interface
         for portname in intf.argnames:

@@ -17,11 +17,28 @@ class Bus:
     def __init__(self):
       self.a = Signal(bool(False))
 
-def invert(i, bar):
+def invert2(i):
+    internal = Signal(bool(False))
     @always_comb
     def foo():
-        bar.next = not i
+        i.next = not internal
     return foo
+
+def invert(i, bar):
+    internal = Bus()
+    internal_a = Signal(bool(False))
+    @always_comb
+    def foo():
+        internal.a.next = not i
+    @always_comb
+    def foo2():
+        internal_a.next = not internal.a
+    @always_comb
+    def foo3():
+        bar.next = not internal_a
+    foo4 = invert2(i)
+
+    return foo, foo2, foo3, foo4
 
 def underscore_collision(busin, you_and_i):
     """ Using underscores as delimiters can collide"""
@@ -49,7 +66,7 @@ def case_insensitive(lifetime, lifeTime):
         lifetime.next = not lifeTime
     return foo
 
-@pytest.mark.xfail
+#@pytest.mark.xfail
 def test_collision_underscore():
     assert analyze(underscore_collision, Bus(),Signal(bool(False))) == 0
 @pytest.mark.xfail
@@ -61,3 +78,13 @@ def test_collision_invalid_char():
 @pytest.mark.xfail
 def test_collision_case_insensitive():
     assert analyze(case_insensitive, Signal(bool(False)), Signal(bool(False))) == 0
+
+
+def main():
+    toVHDL(underscore_collision, Bus(),Signal(bool(False)))
+    toVerilog(underscore_collision, Bus(),Signal(bool(False)))
+
+if __name__ == "__main__":
+    main()
+
+    

@@ -52,16 +52,24 @@ builtinObjects = builtins.__dict__.values()
 
 _enumTypeSet = set()
 
-def _makeName(n, prefixes, namedict):
+def _makeName(n, prefixes, namedict, hdl):
     # trim empty prefixes
     prefixes = [p for p in prefixes if p]
     if len(prefixes) > 1:
 #        name = '_' + '_'.join(prefixes[1:]) + '_' + n
-        name = '_'.join(prefixes[1:]) + '_' + n
+        name = '\\' + '/'.join(prefixes[1:]) + '/' + n
+        if hdl == 'Verilog':
+            name += ' '
+        else:
+            name += '\\'
     else:
         name = n
     if '[' in name or ']' in name:
-        name = "\\" + name + ' '
+        name = "\\" + name
+        if hdl == 'Verilog':
+            name += ' '
+        else:
+            name += '\\'
 ##     print prefixes
 ##     print name
     return name
@@ -98,7 +106,7 @@ def _analyzeSigs(hierarchy, hdl='Verilog'):
                 continue
             if isinstance(s, _SliceSignal):
                 continue
-            s._name = _makeName(n, prefixes, namedict)
+            s._name = _makeName(n, prefixes, namedict, hdl)
             if not s._nrbits:
                 raise ConversionError(_error.UndefinedBitWidth, s._name)
             # slice signals
@@ -109,7 +117,7 @@ def _analyzeSigs(hierarchy, hdl='Verilog'):
         for n, m in memdict.items():
             if m.name is not None:
                 continue
-            m.name = _makeName(n, prefixes, namedict)
+            m.name = _makeName(n, prefixes, namedict, hdl)
             memlist.append(m)
 
     # handle the case where a named signal appears in a list also by giving
@@ -1222,7 +1230,7 @@ def isboundmethod(m):
     return ismethod(m) and m.__self__ is not None
 
 
-def _analyzeTopFunc(top_inst, func, *args, **kwargs):
+def _analyzeTopFunc(top_inst, func, hdl, *args, **kwargs):
     tree = _makeAST(func)
     v = _AnalyzeTopFuncVisitor(func, tree, *args, **kwargs)
     v.visit(tree)
@@ -1240,10 +1248,13 @@ def _analyzeTopFunc(top_inst, func, *args, **kwargs):
             continue
         for attr, attrobj in vars(obj).items():
             if isinstance(attrobj, _Signal):
-                signame = attrobj._name
-                if not signame:
-                    signame = name + '_' + attr
-                    attrobj._name = signame
+                signame = '\\' + name + '.' + attr
+                if hdl == 'Verilog':
+                    signame += ' '
+                else:
+                    signame += '\\'
+                attrobj._name = signame
+                print(signame)
                 v.argdict[signame] = attrobj
                 v.argnames.append(signame)
 
