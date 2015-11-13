@@ -404,7 +404,7 @@ def _writeSigDecls(f, intf, siglist, memlist):
             continue
         r = _getRangeString(m.elObj)
         p = _getTypeString(m.elObj)
-        t = "t_array_%s" % m.name
+        t = "\\t_array_%s\\" % m.name.replace('\\','')
         print("type %s is array(0 to %s-1) of %s%s;" % (t, m.depth, p, r), file=f)
         print("signal %s: %s;" % (m.name, t), file=f)
     print(file=f)
@@ -620,7 +620,7 @@ class _ConvertVisitor(ast.NodeVisitor, _ConversionMixin):
         if isinstance(obj, EnumItemType):
             tipe = obj._type._name
         elif isinstance(obj, _Ram):
-            tipe = "t_array_%s" % name
+            tipe = "\\t_array_%s\\" % name.replace('\\','')
             elt = inferVhdlObj(obj.elObj).toStr(True)
             self.write("type %s is array(0 to %s-1) of %s;" % (tipe, obj.depth, elt))
             self.writeline()
