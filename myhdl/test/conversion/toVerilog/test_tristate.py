@@ -44,13 +44,15 @@ class TestTristate(unittest.TestCase):
         if obuf:
             toVerilog(tristate_obuf_i, obuf)
             A, Y, OE = obuf.interface()
+            inst = setupCosimulation(name='tristate_obuf_i', **toVerilog.portmap)
         else:
             Y  = TristateSignal(True)
             A  = Signal(True)
             OE = Signal(False)
             toVerilog(tristate_obuf, A, Y, OE)
+            inst = setupCosimulation(name='tristate_obuf', **toVerilog.portmap)
 
-        inst = setupCosimulation(name='tristate_obuf', **toVerilog.portmap)
+        
         #inst = tristate_obuf(A, Y, OE)
 
         @instance
