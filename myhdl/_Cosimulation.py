@@ -83,7 +83,7 @@ class Cosimulation(object):
 
         # cosim strips out escape IDs
         pretty_kwargs = {}
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             if k.startswith('\\'):
                 k = k[1:-1]
             pretty_kwargs[k] = v
