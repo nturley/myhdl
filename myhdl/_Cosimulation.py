@@ -81,6 +81,14 @@ class Cosimulation(object):
 
         env = os.environ.copy()
 
+        # cosim strips out escape IDs
+        pretty_kwargs = {}
+        for k, v in kwargs.iteritems():
+            if k.startswith('\\'):
+                k = k[1:-1]
+            pretty_kwargs[k] = v
+        kwargs = pretty_kwargs
+
         # In Windows the FDs aren't inheritable when using Popen,
         # only the HANDLEs are
         if sys.platform != "win32":
