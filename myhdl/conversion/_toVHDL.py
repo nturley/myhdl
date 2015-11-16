@@ -312,7 +312,7 @@ def _writeModuleHeader(f, intf, needPck, lib, arch, useClauses, doc, stdLogicPor
             # make sure signal name is equal to its port name
             convertPort = False
             if stdLogicPorts and s._type is intbv:
-                s._name = portname + "_num"
+                s._name = portname[-1] + "#\\"
                 convertPort = True
                 for sl in s._slicesigs:
                     sl._setName( 'VHDL' )

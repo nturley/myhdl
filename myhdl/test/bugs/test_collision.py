@@ -66,16 +66,16 @@ def case_insensitive(lifetime, lifeTime):
         lifetime.next = not lifeTime
     return foo
 
-#@pytest.mark.xfail
+
 def test_collision_underscore():
     assert analyze(underscore_collision, Bus(),Signal(bool(False))) == 0
-@pytest.mark.xfail
+
 def test_collision_keyword():
     assert analyze(keyword_collide, Signal(bool(False)), Signal(bool(False))) == 0
-@pytest.mark.xfail
+
 def test_collision_invalid_char():
     assert analyze(invalid_char, Signal(bool(False)), Signal(bool(False))) == 0
-@pytest.mark.xfail
+
 def test_collision_case_insensitive():
     assert analyze(case_insensitive, Signal(bool(False)), Signal(bool(False))) == 0
 

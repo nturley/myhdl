@@ -56,22 +56,13 @@ def _makeName(n, prefixes, namedict, hdl):
     # trim empty prefixes
     prefixes = [p for p in prefixes if p]
     if len(prefixes) > 1:
-#        name = '_' + '_'.join(prefixes[1:]) + '_' + n
-        name = '\\' + '/'.join(prefixes[1:]) + '/' + n
-        if hdl == 'Verilog':
-            name += ' '
-        else:
-            name += '\\'
+        name = '\\'+'/'.join(prefixes[1:]) + '/' + n    
     else:
-        name = n
-    if '[' in name or ']' in name:
-        name = "\\" + name
-        if hdl == 'Verilog':
-            name += ' '
-        else:
-            name += '\\'
-##     print prefixes
-##     print name
+        name = '\\'+n
+    if hdl == 'Verilog':
+        name += ' '
+    else:
+        name += '\\'
     return name
 
 
@@ -1248,16 +1239,30 @@ def _analyzeTopFunc(top_inst, func, hdl, *args, **kwargs):
             continue
         for attr, attrobj in vars(obj).items():
             if isinstance(attrobj, _Signal):
-                signame = '\\' + name + '.' + attr
-                if hdl == 'Verilog':
-                    signame += ' '
-                else:
-                    signame += '\\'
+                signame = name + '.' + attr
                 attrobj._name = signame
-                print(signame)
                 v.argdict[signame] = attrobj
                 v.argnames.append(signame)
-
+    
+    # transform all names
+    exnames = {}
+    for n, s in v.argdict.items():
+        name = '\\' + n
+        if hdl=='Verilog':
+            name += ' '
+        else:
+            name += '\\'
+        exnames[name]=s
+    v.argdict = exnames
+    exnames = []
+    for n in v.argnames:
+        name = '\\' + n
+        if hdl=='Verilog':
+            name += ' '
+        else:
+            name += '\\'
+        exnames.append(name)
+    v.argnames = exnames
     return v
 
 class _AnalyzeTopFuncVisitor(_AnalyzeVisitor):
